@@ -2,38 +2,80 @@ import { Navbar, Container, Nav } from "react-bootstrap";
 import "./App.css";
 import { useState } from "react";
 import dataShoes from "./data.js";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, useNavigate, Outlet } from "react-router-dom";
+import Detail from "./routes/Detail";
 
 function App() {
   let [shoes] = useState(dataShoes);
+  let navigate = useNavigate();
 
   return (
     <div className="App">
-      <Link to="/">메인페이지</Link>
-      <Link to="/detail">상세페이지</Link>
-      <Routes>
-        <Route path="/" element={<div>메인페이지임</div>} />
-        <Route path="/detail" element={<div>상세페이지임</div>} />
-        <Route path="/about" element={<div>about페이지임</div>} />
-      </Routes>
-
       <Navbar bg="dark" data-bs-theme="dark">
         <Container>
-          <Navbar.Brand href="/">리엑트쇼핑</Navbar.Brand>
+          <Navbar.Brand
+            onClick={() => {
+              navigate("/");
+            }}
+          >
+            리엑트쇼핑
+          </Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="/home">Home</Nav.Link>
-            <Nav.Link href="/cart">장바구니</Nav.Link>
-            <Nav.Link href="/pricing">결제</Nav.Link>
+            <Nav.Link
+              onClick={() => {
+                navigate("/detail");
+              }}
+            >
+              상세보기
+            </Nav.Link>
           </Nav>
         </Container>
       </Navbar>
 
-      <div className="main-bg"></div>
-      <div className="row">
-        {shoes.map((a, i) => {
-          return <Card shoes={a} i={i + 1} key={i}></Card>;
-        })}
-      </div>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <div className="main-bg"></div>
+              <div className="row">
+                {shoes.map((a, i) => {
+                  return <Card shoes={a} i={i + 1} key={i}></Card>;
+                })}
+              </div>
+            </>
+          }
+        />
+        <Route path="/detail/:id" element={<Detail shoes={shoes} />} />
+        <Route path="/about" element={<About />}>
+          <Route
+            path="member"
+            element={
+              <>
+                <h4>맴버</h4>
+              </>
+            }
+          />
+          <Route
+            path="location"
+            element={
+              <>
+                <h4>위치</h4>
+              </>
+            }
+          />
+        </Route>
+        <Route path="*" element={<div>404 없는페이지임</div>} />
+      </Routes>
+    </div>
+  );
+}
+
+function About() {
+  return (
+    <div>
+      <h2>회사 정보</h2>
+      <Outlet></Outlet>
     </div>
   );
 }
