@@ -22,11 +22,32 @@ let YellowBtn = styled.button`
 // }
 
 function Detail(props) {
-  useEffect(() => {
-    console.log("안녕");
-  });
+  let [popalert, popsetAlert] = useState(true);
+  let [num, setNum] = useState("");
+  let [showtxt, setShowtxt] = useState(false);
 
-  let [count, setCount] = useState(0);
+  useEffect(() => {
+    if (isNaN(num) === true) {
+      setShowtxt(true);
+    }
+  }, [num]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      popsetAlert(false);
+    }, 3000);
+
+    // 이런식의 코드는 useEffect 동작하기 전에 특정코드를 실행하고 싶으면 return ()=>{} 안에 넣을 수 있다.
+    // 이걸 clean up function이라고 부른다.
+    // setTimeout() 쓸 때마다 브라우저 안에 타이머가 하나 생깁니다.
+    // 근데 useEffect 안에 썼기 때문에 컴포넌트가 mount 될 때 마다 실행됩니다.
+    // 그럼 잘못 코드를 짜면 타이머가 100개 1000개 생길 수도 있겠군요.
+    // 나중에 그런 버그를 방지하고 싶으면useEffect에서 타이머 만들기 전에 기존 타이머를 싹 제거하라고 코드를 짜면 되는데
+    // 그런거 짤 때 return ()=>{} 안에 짜면 됩니다.
+    // // return ()=>{
+    // // 기존타이머는 제거 해주세요~.
+    // // }
+  }, []);
 
   // 현재 url에 입력한 숫자
   let { id } = useParams();
@@ -38,15 +59,9 @@ function Detail(props) {
     <div className="container">
       {찾는상품 ? (
         <div className="row">
-          <p>{count}</p>
-          <YellowBtn
-            color="red"
-            onClick={() => {
-              setCount(count + 1);
-            }}
-          >
-            버튼
-          </YellowBtn>
+          {popalert ? (
+            <div className="alert alert-warning">3초 이내 구입시 할인</div>
+          ) : null}
           <div className="col-md-6">
             <img
               src="https://codingapple1.github.io/shop/shoes1.jpg"
@@ -54,6 +69,12 @@ function Detail(props) {
               alt="id"
             />
           </div>
+          {showtxt ? <div>경고 : 숫자만 입력해주세요</div> : null}
+          <input
+            onChange={(e) => {
+              setNum(e.target.value);
+            }}
+          />
           <div className="col-md-6">
             <h4 className="pt-5">{찾는상품.title}</h4>
             <p>{찾는상품.content}</p>
