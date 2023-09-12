@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Nav } from "react-bootstrap";
 import { useParams } from "react-router-dom";
+import {Context1} from "./../App.js";
+
 // import styled from "styled-components";
 
 // let YellowBtn = styled.button`
@@ -22,7 +24,10 @@ import { useParams } from "react-router-dom";
 //   componentWillUnmount() {}
 // }
 
+
 function Detail(props) {
+
+
   let [popalert, popsetAlert] = useState(true);
   let [num, setNum] = useState("");
   let [showtxt, setShowtxt] = useState(false);
@@ -84,7 +89,7 @@ function Detail(props) {
             }}
           />
           <div className="col-md-6">
-            <h4 className="pt-5">{찾는상품.title}</h4>
+            <h4 className="pt-5">{찾는상품.title} {찾는상품.id}</h4>
             <p>{찾는상품.content}</p>
             <p>{찾는상품.price}</p>
             <button className="btn btn-danger">주문하기</button>
@@ -100,7 +105,7 @@ function Detail(props) {
               <Nav.Link onClick={()=>{setTabSw(2)}} eventKey="link2">버튼2</Nav.Link>
             </Nav.Item>
           </Nav>
-          <TabContent tabSw={tabSw} />
+          <TabContent tabSw={tabSw} shoes={props.shoes} id={찾는상품.id} />
         </div>
       ) : (
         <h4>잘못된 접근입니다.</h4>
@@ -108,7 +113,24 @@ function Detail(props) {
     </div>
   );
 }
-function TabContent({tabSw}){
+function TabContent({tabSw, shoes, id}){
+  let [fade, setFade] = useState('')
+  let {재고} = useContext(Context1)
+
+  useEffect(() => {
+    let a = setTimeout(()=>{
+      setFade('end')
+    },100)
+    return ()=> {
+      clearTimeout(a)
+      setFade('')
+    }
+  },[tabSw])
+  return(
+     <div className={`start ${fade}`}>
+      {[<div>{shoes[`${id}`].title} 재고 : {재고[`${id}`]}</div>,<div>내용1</div>,<div>내용2</div>][tabSw]}
+     </div>
+    )
   // if( tabSw === 0) {
     // return <div> 내용 0</div>
   // }
@@ -118,6 +140,5 @@ function TabContent({tabSw}){
   // if( tabSw === 2) {
     // return <div> 내용 2</div>
   // }
-  return [<div>내용0</div>,<div>내용1</div>,<div>내용2</div>][tabSw]
 }
 export default Detail;
