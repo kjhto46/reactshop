@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { Nav } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import styled from "styled-components";
+// import styled from "styled-components";
 
-let YellowBtn = styled.button`
-  font-size: 20px;
-  color: ${(props) => props.color};
-`;
+// let YellowBtn = styled.button`
+//   font-size: 20px;
+//   color: ${(props) => props.color};
+// `;
 
 /**
  * 과거 방식으로 컴포넌트 생성과 Lifecycle
@@ -26,17 +27,24 @@ function Detail(props) {
   let [num, setNum] = useState("");
   let [showtxt, setShowtxt] = useState(false);
 
+  let [tabSw, setTabSw] = useState(0);
+  
   useEffect(() => {
     if (isNaN(num) === true) {
       setShowtxt(true);
+    } else if (isNaN(num) === false) {
+      setShowtxt(false);
     }
   }, [num]);
 
   useEffect(() => {
-    setTimeout(() => {
+    let a = setTimeout(() => {
       popsetAlert(false);
     }, 3000);
 
+    return () => {
+      clearTimeout(a);
+    };
     // 이런식의 코드는 useEffect 동작하기 전에 특정코드를 실행하고 싶으면 return ()=>{} 안에 넣을 수 있다.
     // 이걸 clean up function이라고 부른다.
     // setTimeout() 쓸 때마다 브라우저 안에 타이머가 하나 생깁니다.
@@ -81,11 +89,35 @@ function Detail(props) {
             <p>{찾는상품.price}</p>
             <button className="btn btn-danger">주문하기</button>
           </div>
+          <Nav variant="tabs" defaultActiveKey="link0">
+            <Nav.Item>
+              <Nav.Link onClick={()=>{setTabSw(0)}} eventKey="link0">버튼0</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link onClick={()=>{setTabSw(1)}} eventKey="link1">버튼1</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link onClick={()=>{setTabSw(2)}} eventKey="link2">버튼2</Nav.Link>
+            </Nav.Item>
+          </Nav>
+          <TabContent tabSw={tabSw} />
         </div>
       ) : (
         <h4>잘못된 접근입니다.</h4>
       )}
     </div>
   );
+}
+function TabContent({tabSw}){
+  // if( tabSw === 0) {
+    // return <div> 내용 0</div>
+  // }
+  // if( tabSw === 1) {
+    // return <div> 내용 1</div>
+  // }
+  // if( tabSw === 2) {
+    // return <div> 내용 2</div>
+  // }
+  return [<div>내용0</div>,<div>내용1</div>,<div>내용2</div>][tabSw]
 }
 export default Detail;

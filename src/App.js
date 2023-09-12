@@ -4,9 +4,10 @@ import { useState } from "react";
 import dataShoes from "./data.js";
 import { Routes, Route, useNavigate, Outlet } from "react-router-dom";
 import Detail from "./routes/Detail";
+import axios from "axios";
 
 function App() {
-  let [shoes] = useState(dataShoes);
+  let [shoes, setShoes] = useState(dataShoes);
   let navigate = useNavigate();
 
   return (
@@ -23,7 +24,7 @@ function App() {
           <Nav className="me-auto">
             <Nav.Link
               onClick={() => {
-                navigate("/detail");
+                navigate("/detail/0");
               }}
             >
               상세보기
@@ -43,6 +44,17 @@ function App() {
                   return <Card shoes={a} i={i + 1} key={i}></Card>;
                 })}
               </div>
+              <button onClick={()=>{
+                axios.get('https://codingapple1.github.io/shop/data2.json')
+                .then((result)=> {
+                console.log(result.data)
+                let copy = [...shoes, ...result.data];
+                setShoes(copy);
+                })
+                .catch(()=>{
+                  console.log('데이터 실패함')
+                })
+              }} >더보기</button>
             </>
           }
         />
