@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Nav } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import {Context1} from "./../App.js";
+import { Context1 } from "./../App.js";
+import { addItem } from "../store/cartSlice.js";
+import { useDispatch } from "react-redux";
 
 // import styled from "styled-components";
 
@@ -24,16 +26,15 @@ import {Context1} from "./../App.js";
 //   componentWillUnmount() {}
 // }
 
-
 function Detail(props) {
-
+  let dispatch = useDispatch();
 
   let [popalert, popsetAlert] = useState(true);
   let [num, setNum] = useState("");
   let [showtxt, setShowtxt] = useState(false);
 
   let [tabSw, setTabSw] = useState(0);
-  
+
   useEffect(() => {
     if (isNaN(num) === true) {
       setShowtxt(true);
@@ -89,20 +90,51 @@ function Detail(props) {
             }}
           />
           <div className="col-md-6">
-            <h4 className="pt-5">{찾는상품.title} {찾는상품.id}</h4>
+            <h4 className="pt-5">
+              {찾는상품.title} {찾는상품.id}
+            </h4>
             <p>{찾는상품.content}</p>
             <p>{찾는상품.price}</p>
-            <button className="btn btn-danger">주문하기</button>
+            <button
+              className="btn btn-danger"
+              onClick={() => {
+                let newItem = {id : 찾는상품.id, name : 찾는상품.title, count : 1 }
+                dispatch(addItem(newItem));
+              }}
+            >
+              주문하기
+            </button>
           </div>
           <Nav variant="tabs" defaultActiveKey="link0">
             <Nav.Item>
-              <Nav.Link onClick={()=>{setTabSw(0)}} eventKey="link0">버튼0</Nav.Link>
+              <Nav.Link
+                onClick={() => {
+                  setTabSw(0);
+                }}
+                eventKey="link0"
+              >
+                버튼0
+              </Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link onClick={()=>{setTabSw(1)}} eventKey="link1">버튼1</Nav.Link>
+              <Nav.Link
+                onClick={() => {
+                  setTabSw(1);
+                }}
+                eventKey="link1"
+              >
+                버튼1
+              </Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link onClick={()=>{setTabSw(2)}} eventKey="link2">버튼2</Nav.Link>
+              <Nav.Link
+                onClick={() => {
+                  setTabSw(2);
+                }}
+                eventKey="link2"
+              >
+                버튼2
+              </Nav.Link>
             </Nav.Item>
           </Nav>
           <TabContent tabSw={tabSw} shoes={props.shoes} id={찾는상품.id} />
@@ -113,32 +145,41 @@ function Detail(props) {
     </div>
   );
 }
-function TabContent({tabSw, shoes, id}){
-  let [fade, setFade] = useState('')
-  let {재고} = useContext(Context1)
+
+function TabContent({ tabSw, shoes, id }) {
+  let [fade, setFade] = useState("");
+  let { 재고 } = useContext(Context1);
 
   useEffect(() => {
-    let a = setTimeout(()=>{
-      setFade('end')
-    },100)
-    return ()=> {
-      clearTimeout(a)
-      setFade('')
-    }
-  },[tabSw])
-  return(
-     <div className={`start ${fade}`}>
-      {[<div>{shoes[`${id}`].title} 재고 : {재고[`${id}`]}</div>,<div>내용1</div>,<div>내용2</div>][tabSw]}
-     </div>
-    )
+    let a = setTimeout(() => {
+      setFade("end");
+    }, 100);
+    return () => {
+      clearTimeout(a);
+      setFade("");
+    };
+  }, [tabSw]);
+  return (
+    <div className={`start ${fade}`}>
+      {
+        [
+          <div>
+            {shoes[`${id}`].title} 재고 : {재고[`${id}`]}
+          </div>,
+          <div>내용1</div>,
+          <div>내용2</div>,
+        ][tabSw]
+      }
+    </div>
+  );
   // if( tabSw === 0) {
-    // return <div> 내용 0</div>
+  // return <div> 내용 0</div>
   // }
   // if( tabSw === 1) {
-    // return <div> 내용 1</div>
+  // return <div> 내용 1</div>
   // }
   // if( tabSw === 2) {
-    // return <div> 내용 2</div>
+  // return <div> 내용 2</div>
   // }
 }
 export default Detail;

@@ -5,6 +5,7 @@ import dataShoes from "./data.js";
 import { Routes, Route, useNavigate, Outlet } from "react-router-dom";
 import Detail from "./routes/Detail";
 import axios from "axios";
+import Cart from "./routes/Cart";
 
 export let Context1 = createContext()
 
@@ -31,6 +32,13 @@ function App() {
               }}
             >
               상세보기
+            </Nav.Link>
+            <Nav.Link
+              onClick={() => {
+                navigate("/cart");
+              }}
+            >
+              장바구니
             </Nav.Link>
           </Nav>
         </Container>
@@ -84,6 +92,7 @@ function App() {
             }
           />
         </Route>
+        <Route path="/cart" element={<Cart />} />
         <Route path="*" element={<div>404 없는페이지임</div>} />
       </Routes>
     </div>
