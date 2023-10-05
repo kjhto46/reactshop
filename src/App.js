@@ -1,6 +1,6 @@
 import { Navbar, Container, Nav } from "react-bootstrap";
 import "./App.css";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import dataShoes from "./data.js";
 import { Routes, Route, useNavigate, Outlet } from "react-router-dom";
 import Detail from "./routes/Detail";
@@ -10,9 +10,23 @@ import Cart from "./routes/Cart";
 export let Context1 = createContext()
 
 function App() {
+  let obj = {name : 'kim'}
+  
+  localStorage.setItem('data', JSON.stringify(obj))
+
   let [shoes, setShoes] = useState(dataShoes);
   let [재고] = useState([10, 11, 12]);
   let navigate = useNavigate();
+  let [watchedList, setWatchedList] = useState(()=>{
+    let watchList = localStorage.getItem('watched');
+    return watchList ? JSON.parse(watchList) : [];
+  })
+  useEffect(() => {
+    const watchList = localStorage.getItem('watched');
+    if (watchList) {
+      setWatchedList(JSON.parse(watchList));
+    }
+  }, []);
 
   return (
     <div className="App">
@@ -66,6 +80,20 @@ function App() {
                   console.log('데이터 실패함')
                 })
               }} >더보기</button>
+              <ul>
+                <li>최근 본 항목</li>
+                {watchedList.map((a, i) => {
+
+                  const foundShoe = shoes.find(shoe => shoe.id === a);
+
+                  const nameToDisplay = foundShoe ? foundShoe.title : "";
+                  return <li key={i}>
+                    <a href={"/detail/" + a}>
+                    {nameToDisplay}
+                    </a>
+                  </li>
+                })}
+              </ul>
             </>
           }
         />
@@ -111,12 +139,14 @@ function About() {
 function Card(props) {
   return (
     <div className="col-md-3">
+      <a href={"/detail/" + (props.i - 1) }>
       <img
         src={"https://codingapple1.github.io/shop/shoes" + props.i + ".jpg"}
-        alt="신발2"
+        alt={"신발" + props.i}
       />
       <h4>{props.shoes.title}</h4>
       <p>{props.shoes.content}</p>
+      </a>
     </div>
   );
 }

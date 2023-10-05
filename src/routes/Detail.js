@@ -43,6 +43,7 @@ function Detail(props) {
     }
   }, [num]);
 
+
   useEffect(() => {
     let a = setTimeout(() => {
       popsetAlert(false);
@@ -69,6 +70,20 @@ function Detail(props) {
     return 배열자료.id === id;
   });
 
+  useEffect(()=>{
+    if(localStorage.getItem('watched') === null) {
+      localStorage.setItem('watched', JSON.stringify([찾는상품.id]))
+    } else {
+      let outLocal = localStorage.getItem('watched')
+      outLocal = JSON.parse(outLocal);
+      outLocal.unshift(찾는상품.id)      
+
+      outLocal = new Set(outLocal)
+      outLocal = Array.from(outLocal) 
+      localStorage.setItem('watched', JSON.stringify(outLocal))
+    }
+  })
+
   return (
     <div className="container">
       {찾는상품 ? (
@@ -78,7 +93,7 @@ function Detail(props) {
           ) : null}
           <div className="col-md-6">
             <img
-              src="https://codingapple1.github.io/shop/shoes1.jpg"
+              src={"https://codingapple1.github.io/shop/shoes" + (parseInt(찾는상품.id, 10) + 1) + ".jpg"}
               width="100%"
               alt="id"
             />
