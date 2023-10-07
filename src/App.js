@@ -1,12 +1,14 @@
 import { Navbar, Container, Nav } from "react-bootstrap";
 import "./App.css";
-import { createContext, useEffect, useState } from "react";
+import { Suspense, createContext, lazy, useEffect, useState } from "react";
 import dataShoes from "./data.js";
 import { Routes, Route, useNavigate, Outlet } from "react-router-dom";
-import Detail from "./routes/Detail";
 import axios from "axios";
-import Cart from "./routes/Cart";
 import { useQuery } from "@tanstack/react-query";
+
+const Detail = lazy(()=> import("./routes/Detail"));
+const Cart = lazy(()=> import("./routes/Cart"));
+
 
 export let Context1 = createContext();
 
@@ -14,7 +16,7 @@ function App() {
   let [shoes, setShoes] = useState(dataShoes);
   let [재고] = useState([10, 11, 12]);
   let navigate = useNavigate();
-
+ 
   let [watchedList, setWatchedList] = useState(() => {
     let watchList = localStorage.getItem("watched");
     return watchList ? JSON.parse(watchList) : [];
@@ -69,6 +71,7 @@ function App() {
         </Container>
       </Navbar>
 
+      <Suspense fallback={<div>로딩중</div>}>
       <Routes>
         <Route
           path="/"
@@ -141,6 +144,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="*" element={<div>404 없는페이지임</div>} />
       </Routes>
+      </Suspense>
     </div>
   );
 }
